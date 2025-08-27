@@ -9,6 +9,7 @@ const adminRoutes = require("./routes/admin.routes");
 const typeRoutes = require("./routes/type.routes");
 const timeSlot = require("./routes/timeSlot.routes")
 const categoryRoutes = require("./routes/category.routes");
+const reviwRoutes = require('./routes/review.routes');
 const path = require("path");
 const app = express();
 
@@ -20,6 +21,7 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/types",typeRoutes);
 app.use("/api/timeslot",timeSlot)
+app.use("/api/review",reviwRoutes);
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // app.use("/uploads", express.static("uploads"));
