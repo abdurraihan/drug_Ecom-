@@ -17,7 +17,7 @@ exports.createProduct = async (req, res) => {
       }
     }
 
-    const { name, description, category, type , tag , discount } = cleanedBody;
+    const { name, description, category, type , tag , discount , dealofftheweek ,bestSeller } = cleanedBody;
 
     // Parse priceOptions
     let priceOptions = [];
@@ -48,6 +48,8 @@ exports.createProduct = async (req, res) => {
       type,
       tag,
       discount,
+      dealofftheweek,
+      bestSeller,
       priceOptions,
       photoUrls,
       videoUrls,

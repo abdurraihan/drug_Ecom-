@@ -22,6 +22,8 @@ const productSchema = new mongoose.Schema({
       "hash-rosin", "badder", "cartridges", "disposables", "live-resin-pens"
     ]
   },
+  dealofftheweek:Boolean,
+  bestSeller:Boolean,
   tag:String,
   discount:Number,
   priceOptions: [priceOptionSchema],
