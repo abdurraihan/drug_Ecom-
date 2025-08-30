@@ -110,6 +110,52 @@ exports.getProductsByCategory = async (req, res) => {
 };
 
 
+exports.getDealOffTheWeek = async (req, res) => {
+ 
+  const { page = 1 } = req.query;
+  const limit = 10;
+  const skip = (page - 1) * limit;
+
+  try {
+    const dealOffTheWeekProducts = await Product.find({ dealofftheweek: true }).skip(skip).limit(limit);
+    const total = await Product.countDocuments({ dealofftheweek: true  });
+
+    res.json({
+      data: dealOffTheWeekProducts,
+      page: Number(page),
+      totalPages: Math.ceil(total / limit),
+      totalItems: total,
+    });
+  } catch (err) {
+    console.error("❌ Get products by dealOffTheWeekProducts error:", err);
+    res.status(500).json({ error: "Failed to fetch category products" });
+  }
+};
+
+
+exports.getBestSeller = async (req, res) => {
+ 
+  const { page = 1 } = req.query;
+  const limit = 10;
+  const skip = (page - 1) * limit;
+
+  try {
+    const bestSellingProducts = await Product.find({ bestSeller: true }).skip(skip).limit(limit);
+    const total = await Product.countDocuments({ bestSeller: true  });
+
+    res.json({
+      data: bestSellingProducts,
+      page: Number(page),
+      totalPages: Math.ceil(total / limit),
+      totalItems: total,
+    });
+  } catch (err) {
+    console.error("❌ Get products by bestSellingProducts error:", err);
+    res.status(500).json({ error: "Failed to fetch category products" });
+  }
+};
+
+
 exports.updateProduct = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
