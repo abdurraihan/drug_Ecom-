@@ -1,26 +1,38 @@
-const Admin = require('../models/admin.model');
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
+const Admin = require("../models/admin.model.js");
 
+// Admin Login
+exports.loginAdmin = async (req, res) => {
+  try {
+    const { email, password } = req.body;
 
-// POST /api/admin/login
-exports.login = async (req, res) => {
-  const { email, password } = req.body;
+    // Check if admin exists
+    const admin = await Admin.findOne({ email });
+    if (!admin) {
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
 
-  if (email !== "admin@example.com") {
-    return res.status(403).json({ message: "Access denied" });
+    // Compare password
+    // const isMatch = await bcrypt.compare(password, admin.password);
+    // if (!isMatch) {
+    //   return res.status(401).json({ message: "Invalid email or password" });
+    // }
+
+    // Create JWT
+    const token = jwt.sign(
+      { id: admin._id, email: admin.email },
+      process.env.JWT_SECRET || "supersecretkey",
+      { expiresIn: "1d" } // token valid for 1 day
+    );
+
+    res.json({ message: "Login successful", token });
+  } catch (error) {
+    console.error("Login error:", error);
+    res.status(500).json({ message: "Server error" });
   }
-
-  const admin = await Admin.findOne({ email });
-  if (!admin) {
-    return res.status(400).json({ message: "Admin not found" });
-  }
-
-  if (admin.password !== password) {
-    return res.status(400).json({ message: "Invalid password" });
-  }
-
-  return res.status(200).json({ message: "Login successful" });
 };
-// POST /api/admin/forgot-password
+
 
 exports.forgotPassword = async (req, res) => {
   const { email, newPassword } = req.body;

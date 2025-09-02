@@ -89,6 +89,7 @@ exports.getAllProducts = async (req, res) => {
 
 exports.getProductsByCategory = async (req, res) => {
   const { category } = req.params;
+
   const { page = 1 } = req.query;
   const limit = 10;
   const skip = (page - 1) * limit;

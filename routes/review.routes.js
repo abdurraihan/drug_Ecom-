@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { submitReview, getReviews, approveReview , getApprovedReviews} = require('../controllers/review.controller.js');
-
+const {verifyAdmin} = require("../middleware/authMiddleware")
 // Middleware for image upload
 const upload = require('../middleware/multer.js'); 
 
@@ -14,6 +14,6 @@ router.get('/allreview', getReviews);
 router.get('/approvedreview',getApprovedReviews)
 
 // Admin approves or rejects a review
-router.patch('/approve/:reviewId', approveReview);
+router.patch('/approve/:reviewId',verifyAdmin, approveReview);
 
 module.exports = router;
