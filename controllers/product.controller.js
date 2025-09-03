@@ -63,8 +63,8 @@ exports.createProduct = async (req, res) => {
 };
 
 exports.getAllProducts = async (req, res) => {
-  const { search = "", page = 1 } = req.query;
-  const limit = 10;
+  const { search = "", page = 1 , limit=10} = req.query;
+  // const limit = 10;
   const skip = (page - 1) * limit;
 
   const query = search
