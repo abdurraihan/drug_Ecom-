@@ -13,9 +13,13 @@ const upload = multer.fields([
 router.get("/search",  productController.getAllProducts);
 router.get("/dealoftheweek", productController.getDealOffTheWeek);//deal  // search product 
 router.get("/bestselling", productController.getBestSeller);//deal  // search product 
+router.get("/:id", productController.getProductById)
+
 router.get("/", productController.getAllProducts);
 router.get("/category/:category", productController.getProductsByCategory);
 
+router.patch("/dealoftheweek/:id", productController.toggleDealOfTheWeek);
+router.patch("/bestSeller/:id", productController.toggleBestSeller);
 //private 
 router.post("/",verifyAdmin, upload, productController.createProduct);
 router.put("/:id",verifyAdmin, upload,  productController.updateProduct);

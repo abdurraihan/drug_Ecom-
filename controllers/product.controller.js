@@ -1,10 +1,8 @@
-
 const Product = require("../models/product.model");
 // const { uploadToFTP } = require("../services/ftp.service");
-
+// const { ObjectId } = require('mongodb');
+const mongoose = require("mongoose");
 const path = require("path");
-
-
 
 exports.createProduct = async (req, res) => {
   try {
@@ -13,11 +11,22 @@ exports.createProduct = async (req, res) => {
     for (const key in req.body) {
       if (Object.hasOwn(req.body, key)) {
         cleanedBody[key.trim()] =
-          typeof req.body[key] === "string" ? req.body[key].trim() : req.body[key];
+          typeof req.body[key] === "string"
+            ? req.body[key].trim()
+            : req.body[key];
       }
     }
 
-    const { name, description, category, type , tag , discount , dealofftheweek ,bestSeller } = cleanedBody;
+    const {
+      name,
+      description,
+      category,
+      type,
+      tag,
+      discount,
+      dealofftheweek,
+      bestSeller,
+    } = cleanedBody;
 
     // Parse priceOptions
     let priceOptions = [];
@@ -32,7 +41,7 @@ exports.createProduct = async (req, res) => {
     const photoUrls = [];
     const videoUrls = [];
 
-  for (const file of req.files["photos"] || []) {
+    for (const file of req.files["photos"] || []) {
       const url = `${process.env.FTP_PUBLIC_URL}/${file.filename}`;
       photoUrls.push(url);
     }
@@ -63,7 +72,7 @@ exports.createProduct = async (req, res) => {
 };
 
 exports.getAllProducts = async (req, res) => {
-  const { search = "", page = 1 , limit=10} = req.query;
+  const { search = "", page = 1, limit = 10 } = req.query;
   // const limit = 10;
   const skip = (page - 1) * limit;
 
@@ -86,6 +95,33 @@ exports.getAllProducts = async (req, res) => {
     res.status(500).json({ error: "Failed to fetch products" });
   }
 };
+
+/// get prouct by id
+
+exports.getProductById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    // console.log("🆔 Requested ID:", id);
+
+    if (!id) {
+      return res.status(400).json({ error: "Product ID is required" });
+    }
+
+    // No ObjectId check here since IDs are strings
+    const product = await Product.findById(id);
+
+    if (!product) {
+      return res.status(404).json({ error: "Product not found" });
+    }
+
+    return res.status(200).json(product);
+  } catch (err) {
+    console.error("❌ Get product by ID error:", err);
+    return res.status(500).json({ error: "Failed to fetch product" });
+  }
+};
+
+/// get product by id end
 
 exports.getProductsByCategory = async (req, res) => {
   const { category } = req.params;
@@ -110,16 +146,16 @@ exports.getProductsByCategory = async (req, res) => {
   }
 };
 
-
 exports.getDealOffTheWeek = async (req, res) => {
- 
-  const { page = 1 } = req.query;
-  const limit = 10;
+  const { page = 1 , limit =10 } = req.query;
+  // const limit = 10;
   const skip = (page - 1) * limit;
 
   try {
-    const dealOffTheWeekProducts = await Product.find({ dealofftheweek: true }).skip(skip).limit(limit);
-    const total = await Product.countDocuments({ dealofftheweek: true  });
+    const dealOffTheWeekProducts = await Product.find({ dealoftheweek: true })
+      .skip(skip)
+      .limit(limit);
+    const total = await Product.countDocuments({ dealoftheweek: true });
 
     res.json({
       data: dealOffTheWeekProducts,
@@ -133,16 +169,37 @@ exports.getDealOffTheWeek = async (req, res) => {
   }
 };
 
+exports.toggleDealOfTheWeek = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const product = await Product.findById(id);
+    if (!product) return res.status(404).json({ message: "Product not found" });
+console.log(product);
+    await Product.updateOne(
+      { _id: id },
+      { $set: { dealoftheweek: !product.dealoftheweek } }
+    );
+
+    res.json({
+      message: `Product dealoftheweek set to ${!product.dealoftheweek}`,
+    });
+  } catch (err) {
+    console.error("❌ Toggle dealoftheweek error:", err);
+    res.status(500).json({ error: "Failed to update dealoftheweek status" });
+  }
+};
 
 exports.getBestSeller = async (req, res) => {
- 
-  const { page = 1 } = req.query;
-  const limit = 10;
+  const { page = 1 , limit =10 } = req.query;
+  // const limit = 10;
   const skip = (page - 1) * limit;
 
   try {
-    const bestSellingProducts = await Product.find({ bestSeller: true }).skip(skip).limit(limit);
-    const total = await Product.countDocuments({ bestSeller: true  });
+    const bestSellingProducts = await Product.find({ bestSeller: true })
+      .skip(skip)
+      .limit(limit);
+    const total = await Product.countDocuments({ bestSeller: true });
 
     res.json({
       data: bestSellingProducts,
@@ -156,6 +213,26 @@ exports.getBestSeller = async (req, res) => {
   }
 };
 
+exports.toggleBestSeller= async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const product = await Product.findById(id);
+    if (!product) return res.status(404).json({ message: "Product not found" });
+console.log(product);
+    await Product.updateOne(
+      { _id: id },
+      { $set: { bestSeller: !product.bestSeller } }
+    );
+
+    res.json({
+      message: `Product bestSeller set to ${!product.bestSeller}`,
+    });
+  } catch (err) {
+    console.error("❌ Toggle bestSellererror:", err);
+    res.status(500).json({ error: "Failed to update bestSeller status" });
+  }
+};
 
 exports.updateProduct = async (req, res) => {
   try {
@@ -167,7 +244,9 @@ exports.updateProduct = async (req, res) => {
     for (const key in req.body) {
       if (Object.hasOwn(req.body, key)) {
         cleanedBody[key.trim()] =
-          typeof req.body[key] === "string" ? req.body[key].trim() : req.body[key];
+          typeof req.body[key] === "string"
+            ? req.body[key].trim()
+            : req.body[key];
       }
     }
 
@@ -211,7 +290,6 @@ exports.updateProduct = async (req, res) => {
   }
 };
 
-
 exports.deleteProduct = async (req, res) => {
   try {
     await Product.findByIdAndDelete(req.params.id);
@@ -220,4 +298,3 @@ exports.deleteProduct = async (req, res) => {
     res.status(400).json({ error: "Delete failed" });
   }
 };
-
