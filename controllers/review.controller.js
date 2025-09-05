@@ -31,12 +31,33 @@ const submitReview = async (req, res) => {
 // Get all reviews (for admin panel or other users)
 const getReviews = async (req, res) => {
   try {
-    const reviews = await Review.find();
-    res.status(200).json(reviews);
+    // Get page and limit from query params, default to page 1 and 10 items per page
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    // Fetch reviews with pagination
+    const reviews = await Review.find()
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 }); // optional: latest first
+
+    // Total number of reviews
+    const totalReviews = await Review.countDocuments();
+
+    res.status(200).json({
+      page,
+      totalPages: Math.ceil(totalReviews / limit),
+      totalReviews,
+      reviews,
+    });
   } catch (error) {
     res.status(500).json({ message: 'Error fetching reviews', error });
   }
 };
+
+module.exports = { getReviews };
+
 
 // Admin approves or rejects a review
 
