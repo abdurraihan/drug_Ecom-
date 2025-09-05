@@ -39,6 +39,7 @@ const getReviews = async (req, res) => {
 };
 
 // Admin approves or rejects a review
+
 const approveReview = async (req, res) => {
   const { reviewId } = req.params;
   const { status } = req.body;
@@ -48,15 +49,33 @@ const approveReview = async (req, res) => {
   }
 
   try {
-    const review = await Review.findByIdAndUpdate(reviewId, { status }, { new: true });
+    if (status === 'approved') {
+      // Update review status
+      const review = await Review.findByIdAndUpdate(
+        reviewId,
+        { status },
+        { new: true }
+      );
 
-    if (!review) {
-      return res.status(404).json({ message: 'Review not found' });
+      if (!review) {
+        return res.status(404).json({ message: 'Review not found' });
+      }
+
+      return res.status(200).json({ message: 'Review approved', review });
     }
 
-    res.status(200).json({ message: 'Review status updated', review });
+    if (status === 'rejected') {
+      // Delete the review
+      const review = await Review.findByIdAndDelete(reviewId);
+
+      if (!review) {
+        return res.status(404).json({ message: 'Review not found' });
+      }
+
+      return res.status(200).json({ message: 'Review rejected and deleted', review });
+    }
   } catch (error) {
-    res.status(500).json({ message: 'Error updating review status', error });
+    return res.status(500).json({ message: 'Error processing review', error });
   }
 };
 
