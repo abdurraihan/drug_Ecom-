@@ -10,8 +10,13 @@ const typeRoutes = require("./routes/type.routes");
 const timeSlot = require("./routes/timeSlot.routes")
 const categoryRoutes = require("./routes/category.routes");
 const reviwRoutes = require('./routes/review.routes');
+
 const path = require("path");
 const app = express();
+
+
+
+
 
 app.use(cors());
 app.use(express.json());
