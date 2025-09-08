@@ -56,7 +56,6 @@ const getReviews = async (req, res) => {
   }
 };
 
-module.exports = { getReviews };
 
 
 // Admin approves or rejects a review
@@ -112,8 +111,16 @@ const getApprovedReviews = async (req, res) => {
       .limit(limit)
       .sort({ createdAt: -1 });;
 
-    // Return the approved reviews in the response
-    res.status(200).json(approvedReviews);
+          // Total number of reviews
+    const totalapprovedReviews = await Review.countDocuments();
+
+    res.status(200).json({
+      page,
+      totalPages: Math.ceil(totalapprovedReviews / limit),
+      totalapprovedReviews,
+      approvedReviews,
+    });
+    
   } catch (error) {
     // If there's an error, send a response with a 500 status code
     res.status(500).json({ message: 'Error fetching approved reviews', error });
