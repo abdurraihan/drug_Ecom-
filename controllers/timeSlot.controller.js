@@ -69,3 +69,30 @@ exports.updateSlot = async (req, res) => {
     res.status(500).json({ message: "Error updating slot", error });
   }
 };
+
+
+exports.deleteSlot = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({ message: "Slot ID is required" });
+    }
+
+    const deletedSlot = await TimeSlot.findByIdAndDelete(id);
+
+    if (!deletedSlot) {
+      return res.status(404).json({ message: "Slot not found" });
+    }
+
+    res.status(200).json({
+      message: "Slot deleted successfully",
+      deletedSlot,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Error deleting slot",
+      error: error.message,
+    });
+  }
+};

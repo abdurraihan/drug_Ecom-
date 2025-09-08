@@ -7,5 +7,6 @@ router.post("/add",verifyAdmin,controller.addTimeSlot)
 router.get("/today", controller.getTodaySlots);
 router.get("/tomorrow", controller.getTomorrowSlots);
 router.put("/:id",verifyAdmin, controller.updateSlot);
+router.delete("/:id",controller.deleteSlot)
 
 module.exports = router;
