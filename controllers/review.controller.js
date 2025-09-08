@@ -102,8 +102,15 @@ const approveReview = async (req, res) => {
 
 const getApprovedReviews = async (req, res) => {
   try {
+
+     const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
     // Find reviews where the status is "approved"
-    const approvedReviews = await Review.find({ status: 'approved' });
+    const approvedReviews = await Review.find({ status: 'approved' }).skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 });;
 
     // Return the approved reviews in the response
     res.status(200).json(approvedReviews);
