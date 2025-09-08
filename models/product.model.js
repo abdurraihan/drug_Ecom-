@@ -17,10 +17,7 @@ const productSchema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: [
-        "jar", "packwood", "sluggers", "shatter", "sugar", "live-resin",
-        "hash-rosin", "badder", "cartridges", "disposables", "live-resin-pens"
-      ],
+     
     },
     dealoftheweek: Boolean,
     bestSeller: Boolean,
