@@ -125,15 +125,21 @@ exports.getProductById = async (req, res) => {
 
 exports.getProductsByCategory = async (req, res) => {
   const { category } = req.params;
-
-  const { page = 1 } = req.query;
-  const limit = 10;
+  const { subcategory } = req.query; // Optional subcategory filter
+  const { page = 1, limit = 10 } = req.query;
   const skip = (page - 1) * limit;
-
+ 
   try {
-    const products = await Product.find({ category }).skip(skip).limit(limit);
-    const total = await Product.countDocuments({ category });
-
+    // Construct query based on category and optional subcategory
+    const query = { category };
+    if (subcategory) {
+      query.subcategory = subcategory; // Add subcategory filter if provided
+    }
+ 
+    // Fetch products based on category and optional subcategory
+    const products = await Product.find(query).skip(skip).limit(limit);
+    const total = await Product.countDocuments(query);
+ 
     res.json({
       data: products,
       page: Number(page),
@@ -143,6 +149,30 @@ exports.getProductsByCategory = async (req, res) => {
   } catch (err) {
     console.error("❌ Get products by category error:", err);
     res.status(500).json({ error: "Failed to fetch category products" });
+  }
+};
+ 
+
+exports.getProductsBySubCategory = async (req, res) => {
+  const { subcategory } = req.params;
+
+  const { page = 1 , limit = 10} = req.query;
+ 
+  const skip = (page - 1) * limit;
+
+  try {
+    const products = await Product.find({ subcategory }).skip(skip).limit(limit);
+    const total = await Product.countDocuments({ subcategory });
+
+    res.json({
+      data: products,
+      page: Number(page),
+      totalPages: Math.ceil(total / limit),
+      totalItems: total,
+    });
+  } catch (err) {
+    console.error("❌ Get products by subcategory error:", err);
+    res.status(500).json({ error: "Failed to fetch subcategory products" });
   }
 };
 

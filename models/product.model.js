@@ -11,14 +11,9 @@ const productSchema = new mongoose.Schema(
     _id: { type: String, default: () => new mongoose.Types.ObjectId().toString() }, // string id
     name: String,
     description: String,
-    category: {
-      type: String,
-     
-    },
-    type: {
-      type: String,
-     
-    },
+    category:String,
+    type:String,
+    subcategory:String,
     dealoftheweek: Boolean,
     bestSeller: Boolean,
     tag: String,

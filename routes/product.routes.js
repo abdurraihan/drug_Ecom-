@@ -17,6 +17,7 @@ router.get("/:id", productController.getProductById)
 
 router.get("/", productController.getAllProducts);
 router.get("/category/:category", productController.getProductsByCategory);
+router.get("/subcategory/:subcategory", productController.getProductsBySubCategory);
 
 router.patch("/dealoftheweek/:id", productController.toggleDealOfTheWeek);
 router.patch("/bestSeller/:id", productController.toggleBestSeller);
