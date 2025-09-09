@@ -286,7 +286,7 @@ exports.updateProduct = async (req, res) => {
     if (description) product.description = description;
     if (category) product.category = category;
     if (type) product.type = type;
-    if (discount) product.discount == discount
+    if (discount) product.discount = discount
 
     // Parse priceOptions if provided
     if (cleanedBody.priceOptions) {
