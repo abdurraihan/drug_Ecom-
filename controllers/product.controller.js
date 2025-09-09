@@ -280,12 +280,13 @@ exports.updateProduct = async (req, res) => {
       }
     }
 
-    const { name, description, category, type } = cleanedBody;
+    const { name, description, category, type , discount } = cleanedBody;
 
     if (name) product.name = name;
     if (description) product.description = description;
     if (category) product.category = category;
     if (type) product.type = type;
+    if (discount) product.discount == discount
 
     // Parse priceOptions if provided
     if (cleanedBody.priceOptions) {
