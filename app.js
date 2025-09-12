@@ -44,3 +44,7 @@ mongoose.connect(process.env.MONGO_URI)
   })
   .catch((err) => console.error("MongoDB connection failed:", err));
 
+app.get("/", (req, res) => {
+  res.send("Hello World from VPS!");
+});
+
